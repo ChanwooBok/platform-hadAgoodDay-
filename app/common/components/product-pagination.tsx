@@ -1,13 +1,13 @@
 import { useSearchParams } from "react-router";
 import {
+  Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
+  PaginationEllipsis,
   PaginationNext,
   PaginationPrevious,
 } from "./ui/pagination";
-import { Pagination } from "./ui/pagination";
 
 type ProductPaginationProps = {
   totalPages: number;
@@ -18,7 +18,6 @@ export default function ProductPagination({
 }: ProductPaginationProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page") ?? 1);
-  console.log("Page value:", page);
   if (isNaN(page) || page < 1) {
     return null;
   }

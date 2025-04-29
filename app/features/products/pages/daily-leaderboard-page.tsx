@@ -7,6 +7,19 @@ import { ProductCard } from "../components/product-card";
 import { Button } from "~/common/components/ui/button";
 import ProductPagination from "~/common/components/product-pagination";
 
+export const meta: Route.MetaFunction = ({ params }) => {
+  const date = DateTime.fromObject({
+    year: Number(params.year),
+    month: Number(params.month),
+    day: Number(params.day),
+  });
+  return [
+    {
+      title: `The best product of ${date.toLocaleString(DateTime.DATE_MED)}`,
+    },
+  ];
+};
+
 const paramsSchema = z.object({
   year: z.coerce.number(),
   month: z.coerce.number(),

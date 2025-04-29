@@ -7,6 +7,13 @@ import { ProductCard } from "../components/product-card";
 import { Button } from "~/common/components/ui/button";
 import ProductPagination from "~/common/components/product-pagination";
 
+export const meta: Route.MetaFunction = ({ params }) => {
+  const date = DateTime.fromObject({
+    year: Number(params.year),
+  });
+  return [{ title: `best of ${date.toLocaleString({ year: "numeric" })}` }];
+};
+
 // zod -> It's a type-safe way to handle URL parameters, ensuring they're the correct type before using them in your application.
 const paramsSchema = z.object({
   year: z.coerce.number(),

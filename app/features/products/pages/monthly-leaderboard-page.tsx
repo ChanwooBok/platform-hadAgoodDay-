@@ -7,10 +7,29 @@ import { ProductCard } from "../components/product-card";
 import { Button } from "~/common/components/ui/button";
 import ProductPagination from "~/common/components/product-pagination";
 
+// Cool thing about meta function is that it can bring the params from the url
+export const meta: Route.MetaFunction = ({ params }) => {
+  const date = DateTime.fromObject({
+    year: Number(params.year),
+    month: Number(params.month),
+  });
+  return [
+    {
+      title: `best of ${date.toLocaleString({
+        month: "long",
+        year: "2-digit",
+      })}`,
+    },
+  ];
+};
+
+// zod -> It's a type-safe way to handle URL parameters, ensuring they're the correct type before using them in your application.
 const paramsSchema = z.object({
   year: z.coerce.number(),
   month: z.coerce.number(),
 });
+// Using zod, we can validate the params. Basically we write down in the object what we expect.
+// and then we can use the paramsSchema to validate the params.
 
 export const loader = ({ params }: Route.LoaderArgs) => {
   const { success, data: parsedData } = paramsSchema.safeParse(params);
@@ -23,6 +42,8 @@ export const loader = ({ params }: Route.LoaderArgs) => {
       { status: 400 }
     );
   }
+  // the whole reason why we use luxon is to validate the date like using isValid
+  // because it is so complicated to validate the date in javascript
   const date = DateTime.fromObject({
     year: parsedData.year,
     month: parsedData.month,
@@ -51,7 +72,7 @@ export const loader = ({ params }: Route.LoaderArgs) => {
   }
   return {
     ...parsedData,
-  }; // 위에서 데이터 검증이 끝났다면 정상적으로 반환
+  }; // 위에서 luxon을 이용해서 데이터 검증이 끝났다면 정상적으로 반환
 };
 
 export default function WeeklyLeaderboardPage({
@@ -63,7 +84,7 @@ export default function WeeklyLeaderboardPage({
   });
   const previousMonth = urlDate.minus({ months: 1 });
   const nextMonth = urlDate.plus({ months: 1 });
-  // luxon을 써야하는 이유
+  // luxon을 써야하는 이유 -> 날짜 비교를 쉽게 해주기 때문
   const isToday = urlDate.equals(DateTime.now().startOf("month"));
 
   return (
