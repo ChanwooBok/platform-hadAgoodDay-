@@ -81,8 +81,8 @@ const menus = [
         to: "/jobs?type=freelance",
       },
       {
-        name: "submit a job",
-        description: "submit a job to our community",
+        name: "Post a job",
+        description: "Post a job to our community",
         to: "/jobs/submit",
       },
     ],
@@ -240,13 +240,13 @@ export default function Navigation({
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer">
-                  <Link to="/my/profile">
+                  <Link to="/users/woo">
                     <UserIcon className="size-4 mr-2" />
                     Profile
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="cursor-pointer">
-                  <Link to="/auth/settings">
+                  <Link to="/my/settings">
                     <SettingsIcon className="size-4 mr-2" />
                     Settings
                   </Link>
