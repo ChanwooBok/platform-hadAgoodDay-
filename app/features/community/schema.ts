@@ -1,5 +1,4 @@
 import {
-  AnyPgColumn,
   bigint,
   pgTable,
   primaryKey,
@@ -12,7 +11,7 @@ import { profiles } from "../users/schema";
 export const topics = pgTable("topics", {
   topic_id: bigint({ mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
   name: text().notNull(),
-  slug: text().notNull(),
+  slug: text().notNull(), // what is slug? -> it is a unique identifier for the topic
   created_at: timestamp().notNull().defaultNow(),
 });
 
@@ -51,11 +50,11 @@ export const postReplies = pgTable("post_replies", {
     onDelete: "cascade",
   }),
   parent_id: bigint({ mode: "number" }).references(
-    (): AnyPgColumn => postReplies.post_reply_id,
+    () => postReplies.post_reply_id,
     {
       onDelete: "cascade",
     }
-  ), // AnyPgColumn -> references to itself -> postReplies.post_reply_id
+  ), // Self-reference for nested replies
   profile_id: uuid()
     .references(() => profiles.profile_id, {
       onDelete: "cascade",

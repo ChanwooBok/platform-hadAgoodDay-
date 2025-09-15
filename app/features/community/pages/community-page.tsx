@@ -13,13 +13,21 @@ import { ChevronDownIcon } from "lucide-react";
 import { SORT_OPTIONS, PERIOD_OPTIONS } from "../constants";
 import { Input } from "~/common/components/ui/input";
 import { PostCard } from "../components/post-card";
+import { getTopics } from "../queries";
 
 export const meta: Route.MetaFunction = () => [
   { title: "Community" },
   { name: "description", content: "Join our community discussions" },
 ];
 
-export default function CommunityPage() {
+export const loader = async () => {
+  const topics = await getTopics();
+  return {
+    topics,
+  };
+};
+
+export default function CommunityPage({ loaderData }: Route.ComponentProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const sorting = searchParams.get("sorting") || "newest";
   const period = searchParams.get("period") || "all";
@@ -111,15 +119,14 @@ export default function CommunityPage() {
             Topics
           </span>
           <div className="flex flex-col gap-2 items-start">
-            {[
-              "AI Tools",
-              "Design Tools",
-              "Dev Tools",
-              "Note Taking Apps",
-              "Productivity Tools",
-            ].map((category) => (
-              <Button asChild variant={"link"} key={category} className="pl-0">
-                <Link to={`/community?topic=${category}`}>{category}</Link>
+            {loaderData.topics.map((topic) => (
+              <Button
+                asChild
+                variant={"link"}
+                key={topic.slug}
+                className="pl-0"
+              >
+                <Link to={`/community?topic=${topic.slug}`}>{topic.name}</Link>
               </Button>
             ))}
           </div>
