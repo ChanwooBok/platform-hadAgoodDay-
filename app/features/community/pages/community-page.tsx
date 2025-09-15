@@ -13,7 +13,7 @@ import { ChevronDownIcon } from "lucide-react";
 import { SORT_OPTIONS, PERIOD_OPTIONS } from "../constants";
 import { Input } from "~/common/components/ui/input";
 import { PostCard } from "../components/post-card";
-import { getTopics } from "../queries";
+import { getPosts, getTopics } from "../queries";
 
 export const meta: Route.MetaFunction = () => [
   { title: "Community" },
@@ -22,8 +22,10 @@ export const meta: Route.MetaFunction = () => [
 
 export const loader = async () => {
   const topics = await getTopics();
+  const posts = await getPosts();
   return {
     topics,
+    posts,
   };
 };
 
@@ -99,15 +101,16 @@ export default function CommunityPage({ loaderData }: Route.ComponentProps) {
             </Button>
           </div>
           <div className="space-y-5">
-            {Array.from({ length: 11 }).map((_, index) => (
+            {loaderData.posts.map((post) => (
               <PostCard
-                key={index}
-                id={`postId-${index}`}
-                title="What is the best productivity tool?"
-                author="woo"
-                authorAvatarUrl="https://github.com/apple.png"
-                category="Productivity"
-                postedAt="12 hours ago"
+                key={post.id}
+                id={post.id}
+                title={post.title}
+                author={post.author}
+                authorAvatarUrl={post.authorAvatarUrl}
+                category={post.topic}
+                postedAt={post.created_at}
+                votesCount={post.upvotes}
                 expanded
               />
             ))}
