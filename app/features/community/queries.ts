@@ -77,6 +77,7 @@ export const getTopics = async () => {
 // <--- supabase via view --->
 
 export const getPosts = async () => {
+  await new Promise((resolve) => setTimeout(resolve, 4000));
   const { data, error } = await client
     .from("community_post_list_view")
     .select(`*`);
