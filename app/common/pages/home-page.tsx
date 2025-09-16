@@ -3,7 +3,7 @@ import { PostCard } from "~/features/community/components/post-card";
 import { IdeaCard } from "~/features/ideas/components/idea-card";
 import { JobCard } from "~/features/jobs/components/job-card";
 import { TeamCard } from "~/features/teams/components/team-card";
-import { Link, type MetaFunction } from "react-router";
+import { Link, type MetaFunction, type ComponentProps } from "react-router";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -17,13 +17,18 @@ import { ArrowRightIcon, DotIcon, EyeIcon, HeartIcon } from "lucide-react";
 import { Avatar, AvatarImage } from "../components/ui/avatar";
 import { AvatarFallback } from "../components/ui/avatar";
 import type { Route } from "./+types/home-page";
+import { DateTime } from "luxon";
+import { getProductsByDateRange } from "~/features/products/queries";
 
-export function loader({ request }: Route.LoaderArgs) {
-  console.log("hello");
-  return {
-    hello: "world",
-  };
-}
+export const loader = async () => {
+  const products = await getProductsByDateRange({
+    startDate: DateTime.now().startOf("day"),
+    endDate: DateTime.now().endOf("day"),
+    limit: 8,
+  });
+  console.log(products + "nothing");
+  return { products };
+};
 
 export function action({ request }: Route.ActionArgs) {
   return {};
@@ -36,7 +41,7 @@ export function meta(): Route.MetaFunction {
   ];
 }
 
-export default function HomePage() {
+export default function HomePage({ loaderData }: Route.ComponentProps) {
   return (
     <div className="px-20 space-y-40">
       <div className="grid grid-cols-3 gap-4">
@@ -51,15 +56,15 @@ export default function HomePage() {
             <Link to="/products/leaderboards">Explore all products &rarr;</Link>
           </Button>
         </div>
-        {Array.from({ length: 11 }).map((_, index) => (
+        {loaderData.products.map((product, index) => (
           <ProductCard
-            key={index}
-            id={`productId-${index}`}
-            title="Product Name"
-            description="Product Description"
-            commentCount={12}
-            viewCount={12}
-            upvoteCount={120}
+            key={product.product_id}
+            id={product.product_id.toString()}
+            name={product.name}
+            description={product.description}
+            reviewsCount={product.reviews}
+            viewCount={product.views}
+            votesCount={product.upvotes}
           />
         ))}
       </div>
@@ -96,7 +101,9 @@ export default function HomePage() {
             Find ideas for your next project.
           </p>
           <Button variant="link" asChild className="text-lg p-0">
-            <Link to="/ideas">Explore all ideas &rarr;</Link>
+            <Link prefetch="viewport" to="/ideas">
+              Explore all ideas &rarr;
+            </Link>
           </Button>
         </div>
         {Array.from({ length: 5 }).map((_, index) => (

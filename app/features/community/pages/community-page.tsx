@@ -14,26 +14,48 @@ import { SORT_OPTIONS, PERIOD_OPTIONS } from "../constants";
 import { Input } from "~/common/components/ui/input";
 import { PostCard } from "../components/post-card";
 import { getPosts, getTopics } from "../queries";
-import { Suspense } from "react";
+//import { Suspense } from "react";
 
 export const meta: Route.MetaFunction = () => [
   { title: "Community" },
   { name: "description", content: "Join our community discussions" },
 ];
 
+// <--- Getting topics and posts at the same time --->
+// export const loader = async () => {
+//   const [topics, posts] = await Promise.all([getTopics(), getPosts()]);
+
+// <--- Showing loading state to user : using suspense & await in browser --->
+// export const loader = async() => {
+//   const topics = getTopics();
+//   const posts = getPosts();
+//   return {
+//     topics,
+//     posts,
+//   };
+// };
+
+//<--- Server Loader --->
 export const loader = async () => {
-  //await new Promise((resolve) => setTimeout(resolve, 1000));
-  const topics = await getTopics();
-  //const posts = await getPosts();
-  const posts = getPosts();
+  const [topics, posts] = await Promise.all([getTopics(), getPosts()]);
   return {
     topics,
     posts,
   };
 };
 
+// <--- Client Loader --->
+// export const clientLoader = async () => {
+//   //const serverData = await serverLoader; // we can access the server data here as well
+//   const [topics, posts] = await Promise.all([getTopics(), getPosts()]);
+//   return {
+//     topics,
+//     posts,
+//   };
+// };
+
 export default function CommunityPage({ loaderData }: Route.ComponentProps) {
-  const { posts } = loaderData;
+  //const { posts } = loaderData; // using suspense & await in browser
   const [searchParams, setSearchParams] = useSearchParams();
   const sorting = searchParams.get("sorting") || "newest";
   const period = searchParams.get("period") || "all";
@@ -104,7 +126,7 @@ export default function CommunityPage({ loaderData }: Route.ComponentProps) {
               <Link to={`/community/submit`}>Create Discussion</Link>
             </Button>
           </div>
-          <Suspense fallback={<div>Loading...</div>}>
+          {/* <Suspense fallback={<div>Loading...</div>}>
             <Await resolve={posts}>
               {(data) => (
                 <div className="space-y-5">
@@ -124,7 +146,22 @@ export default function CommunityPage({ loaderData }: Route.ComponentProps) {
                 </div>
               )}
             </Await>
-          </Suspense>
+          </Suspense> */}
+          <div className="space-y-5">
+            {loaderData.posts.map((post) => (
+              <PostCard
+                key={post.post_id}
+                id={post.post_id}
+                title={post.title}
+                author={post.author}
+                authorAvatarUrl={post.author_avatar}
+                category={post.topic}
+                postedAt={post.created_at}
+                votesCount={post.upvotes}
+                expanded
+              />
+            ))}
+          </div>
         </div>
 
         <aside className="col-span-2 space-y-5">
@@ -148,3 +185,8 @@ export default function CommunityPage({ loaderData }: Route.ComponentProps) {
     </div>
   );
 }
+
+// <--- Even when fetching data from browser, we can show a loading state to user --->
+// export function HydrateFallback() {
+//   return <div>loading.,,,..</div>;
+// }

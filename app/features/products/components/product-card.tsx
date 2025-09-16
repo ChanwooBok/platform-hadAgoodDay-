@@ -11,31 +11,31 @@ import {
 
 interface ProductCardProps {
   id: string;
-  title: string;
+  name: string;
   description: string;
-  commentCount: number;
-  viewCount: number;
-  upvoteCount: number;
+  reviewsCount: string;
+  viewCount: string;
+  votesCount: string;
 }
 
 export function ProductCard({
   id,
-  title,
+  name,
   description,
-  commentCount,
+  reviewsCount,
   viewCount,
-  upvoteCount,
+  votesCount,
 }: ProductCardProps) {
   return (
     <Link to={`/products/${id}`} className="block">
       <Card className="w-full flex items-center justify-between bg-transparent hover:bg-card/50">
         <CardHeader>
-          <CardTitle>{title}</CardTitle>
+          <CardTitle>{name}</CardTitle>
           <CardDescription>{description}</CardDescription>
           <div className="flex items-center gap-4 mt-2">
             <div className="flex items-center gap-px text-xs text-muted-foreground">
               <MessageCircleIcon className="w-4 h-4" />
-              <span>{commentCount}</span>
+              <span>{reviewsCount}</span>
             </div>
             <div className="flex items-center gap-px text-xs text-muted-foreground">
               <EyeIcon className="w-4 h-4" />
@@ -46,7 +46,7 @@ export function ProductCard({
         <CardFooter className="py-0">
           <Button variant="outline" className="flex h-14 flex-col">
             <ChevronUpIcon className="size-4 shrink-0" />
-            <span>{upvoteCount}</span>
+            <span>{votesCount}</span>
           </Button>
         </CardFooter>
       </Card>

@@ -57,6 +57,13 @@
       "when": 1757990231218,
       "tag": "0007_smooth_mentor",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1758039190571,
+      "tag": "0008_stiff_the_spike",
+      "breakpoints": true
     }
   ]
 }

@@ -3,9 +3,41 @@ import { Hero } from "../../../common/components/hero";
 import { ProductCard } from "../components/product-card";
 import { Button } from "~/common/components/ui/button";
 import { Link } from "react-router";
-export function loader({ request }: { request: Request }) {
-  return {};
-}
+import { getProductsByDateRange } from "../queries";
+import { DateTime } from "luxon";
+import type { Route } from "./+types/leaderboards-page";
+
+export const loader = async () => {
+  const [dailyProducts, weeklyProducts, monthlyProducts, yearlyProducts] =
+    await Promise.all([
+      getProductsByDateRange({
+        startDate: DateTime.now().startOf("day"),
+        endDate: DateTime.now().endOf("day"),
+        limit: 7,
+      }),
+      getProductsByDateRange({
+        startDate: DateTime.now().startOf("week"),
+        endDate: DateTime.now().endOf("week"),
+        limit: 7,
+      }),
+      getProductsByDateRange({
+        startDate: DateTime.now().startOf("month"),
+        endDate: DateTime.now().endOf("month"),
+        limit: 7,
+      }),
+      getProductsByDateRange({
+        startDate: DateTime.now().startOf("year"),
+        endDate: DateTime.now().endOf("year"),
+        limit: 7,
+      }),
+    ]);
+  return {
+    dailyProducts,
+    weeklyProducts,
+    monthlyProducts,
+    yearlyProducts,
+  };
+};
 
 export function action({ request }: { request: Request }) {
   return {};
@@ -18,7 +50,7 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export default function LeaderboardsPage() {
+export default function LeaderboardsPage({ loaderData }: Route.ComponentProps) {
   return (
     <div className="container mx-auto px-4 py-8">
       <Hero title="Leaderboards" description="the most popular products" />
@@ -32,15 +64,15 @@ export default function LeaderboardsPage() {
             The best products made by our community today.
           </p>
         </div>
-        {Array.from({ length: 10 }).map((_, index) => (
+        {loaderData.dailyProducts.map((product) => (
           <ProductCard
-            key={index}
-            id={`productId-${index}`}
-            title="Product Name"
-            description="Product Description"
-            commentCount={12}
-            viewCount={12}
-            upvoteCount={120}
+            key={product.product_id.toString()}
+            id={product.product_id.toString()}
+            name={product.name}
+            description={product.description}
+            reviewsCount={product.reviews}
+            viewCount={product.views}
+            votesCount={product.upvotes}
           />
         ))}
         <a
@@ -59,15 +91,15 @@ export default function LeaderboardsPage() {
             The best products made by our community this week.
           </p>
         </div>
-        {Array.from({ length: 10 }).map((_, index) => (
+        {loaderData.weeklyProducts.map((product) => (
           <ProductCard
-            key={index}
-            id={`productId-${index}`}
-            title="Product Name"
-            description="Product Description"
-            commentCount={12}
-            viewCount={12}
-            upvoteCount={120}
+            key={product.product_id.toString()}
+            id={product.product_id.toString()}
+            name={product.name}
+            description={product.description}
+            reviewsCount={product.reviews}
+            viewCount={product.views}
+            votesCount={product.upvotes}
           />
         ))}
         <a
@@ -86,15 +118,15 @@ export default function LeaderboardsPage() {
             The best products made by our community this month.
           </p>
         </div>
-        {Array.from({ length: 10 }).map((_, index) => (
+        {loaderData.monthlyProducts.map((product) => (
           <ProductCard
-            key={index}
-            id={`productId-${index}`}
-            title="Product Name"
-            description="Product Description"
-            commentCount={12}
-            viewCount={12}
-            upvoteCount={120}
+            key={product.product_id.toString()}
+            id={product.product_id.toString()}
+            name={product.name}
+            description={product.description}
+            reviewsCount={product.reviews}
+            viewCount={product.views}
+            votesCount={product.upvotes}
           />
         ))}
         <a
@@ -113,15 +145,15 @@ export default function LeaderboardsPage() {
             The best products made by our community this year.
           </p>
         </div>
-        {Array.from({ length: 10 }).map((_, index) => (
+        {loaderData.yearlyProducts.map((product) => (
           <ProductCard
-            key={index}
-            id={`productId-${index}`}
-            title="Product Name"
-            description="Product Description"
-            commentCount={12}
-            viewCount={12}
-            upvoteCount={120}
+            key={product.product_id.toString()}
+            id={product.product_id.toString()}
+            name={product.name}
+            description={product.description}
+            reviewsCount={product.reviews}
+            viewCount={product.views}
+            votesCount={product.upvotes}
           />
         ))}
         <a

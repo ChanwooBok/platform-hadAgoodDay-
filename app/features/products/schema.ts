@@ -23,7 +23,7 @@ export const products = pgTable("products", {
   tagline: text().notNull(),
   how_it_works: text().notNull(),
   icon: text().notNull(),
-  stats: jsonb().notNull().default({ views: 0, reviews: 0 }),
+  stats: jsonb().notNull().default({ views: 0, reviews: 0, upvotes: 0 }),
   profile_id: uuid()
     .references(() => profiles.profile_id, { onDelete: "cascade" })
     .notNull(),
