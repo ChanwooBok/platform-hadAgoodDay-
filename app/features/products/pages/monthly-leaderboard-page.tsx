@@ -6,6 +6,8 @@ import { Hero } from "~/common/components/hero";
 import { ProductCard } from "../components/product-card";
 import { Button } from "~/common/components/ui/button";
 import ProductPagination from "~/common/components/product-pagination";
+import { PAGE_SIZE } from "../constants";
+import { getProductPagesByDateRange, getProductsByDateRange } from "../queries";
 
 // Cool thing about meta function is that it can bring the params from the url
 export const meta: Route.MetaFunction = ({ params }) => {
@@ -31,7 +33,7 @@ const paramsSchema = z.object({
 // Using zod, we can validate the params. Basically we write down in the object what we expect.
 // and then we can use the paramsSchema to validate the params.
 
-export const loader = ({ params }: Route.LoaderArgs) => {
+export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const { success, data: parsedData } = paramsSchema.safeParse(params);
   if (!success) {
     throw data(
@@ -59,6 +61,7 @@ export const loader = ({ params }: Route.LoaderArgs) => {
       }
     );
   }
+  const url = new URL(request.url);
   const today = DateTime.now().setZone("Asia/Seoul").startOf("month");
   // 미래 날짜 정보는 볼 수 없으므로 검증
   if (date > today) {
@@ -70,9 +73,21 @@ export const loader = ({ params }: Route.LoaderArgs) => {
       { status: 400 }
     );
   }
+  const products = await getProductsByDateRange({
+    startDate: date.startOf("month").toUTC(),
+    endDate: date.endOf("month").toUTC(),
+    limit: PAGE_SIZE,
+    page: Number(url.searchParams.get("page") ?? 1),
+  });
+  const totalPages = await getProductPagesByDateRange({
+    startDate: date.startOf("month").toUTC(),
+    endDate: date.endOf("month").toUTC(),
+  });
   return {
     ...parsedData,
-  }; // 위에서 luxon을 이용해서 데이터 검증이 끝났다면 정상적으로 반환
+    products,
+    totalPages,
+  };
 };
 
 export default function WeeklyLeaderboardPage({
@@ -125,19 +140,19 @@ export default function WeeklyLeaderboardPage({
       </div>
 
       <div className="space-y-5 w-full max-w-screen-md mx-auto">
-        {Array.from({ length: 11 }).map((_, index) => (
+        {loaderData.products.map((product) => (
           <ProductCard
-            key={index}
-            id={`productId-${index}`}
-            title="Product Name"
-            description="Product Description"
-            commentCount={12}
-            viewCount={12}
-            upvoteCount={120}
+            key={product.product_id}
+            id={product.product_id}
+            name={product.name}
+            description={product.description}
+            reviewsCount={product.reviews}
+            viewCount={product.views.toString()}
+            votesCount={product.upvotes.toString()}
           />
         ))}
       </div>
-      <ProductPagination totalPages={10} />
+      <ProductPagination totalPages={loaderData.totalPages} />
     </div>
   );
 }

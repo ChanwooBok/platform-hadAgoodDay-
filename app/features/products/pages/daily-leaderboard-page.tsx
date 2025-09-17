@@ -6,13 +6,15 @@ import { Hero } from "~/common/components/hero";
 import { ProductCard } from "../components/product-card";
 import { Button } from "~/common/components/ui/button";
 import ProductPagination from "~/common/components/product-pagination";
+import { getProductPagesByDateRange, getProductsByDateRange } from "../queries";
+import { PAGE_SIZE } from "../constants";
 
 export const meta: Route.MetaFunction = ({ params }) => {
   const date = DateTime.fromObject({
     year: Number(params.year),
     month: Number(params.month),
     day: Number(params.day),
-  });
+  }).setZone("America/New_York");
   return [
     {
       title: `The best product of ${date.toLocaleString(DateTime.DATE_MED)}`,
@@ -26,7 +28,7 @@ const paramsSchema = z.object({
   day: z.coerce.number(),
 });
 
-export const loader = ({ params }: Route.LoaderArgs) => {
+export const loader = async ({ params, request }: Route.LoaderArgs) => {
   const { success, data: parsedData } = paramsSchema.safeParse(params);
   if (!success) {
     throw data(
@@ -37,7 +39,8 @@ export const loader = ({ params }: Route.LoaderArgs) => {
       { status: 400 }
     );
   }
-  const date = DateTime.fromObject(parsedData).setZone("Asia/Seoul");
+
+  const date = DateTime.fromObject(parsedData).setZone("America/New_York");
   if (!date.isValid) {
     throw data(
       {
@@ -49,7 +52,7 @@ export const loader = ({ params }: Route.LoaderArgs) => {
       }
     );
   }
-  const today = DateTime.now().setZone("Asia/Seoul").startOf("day");
+  const today = DateTime.now().setZone("America/New_York").startOf("day");
   // 미래 날짜 정보는 볼 수 없으므로 검증
   if (date > today) {
     throw data(
@@ -60,9 +63,26 @@ export const loader = ({ params }: Route.LoaderArgs) => {
       { status: 400 }
     );
   }
+
+  const url = new URL(request.url);
+
+  const products = await getProductsByDateRange({
+    startDate: date.startOf("day").toUTC(),
+    endDate: date.endOf("day").plus({ days: 1 }).toUTC(),
+    limit: PAGE_SIZE,
+    page: Number(url.searchParams.get("page") ?? 1),
+  });
+
+  const totalPages = await getProductPagesByDateRange({
+    startDate: date.startOf("day").toUTC(),
+    endDate: date.endOf("day").plus({ days: 1 }).toUTC(),
+  });
+
   return {
     ...parsedData,
-  }; // 위에서 데이터 검증이 끝났다면 정상적으로 반환
+    products,
+    totalPages,
+  };
 };
 
 export default function DailyLeaderboardPage({
@@ -76,7 +96,9 @@ export default function DailyLeaderboardPage({
   const previousDay = urlDate.minus({ days: 1 });
   const nextDay = urlDate.plus({ days: 1 });
   // luxon을 써야하는 이유
-  const isToday = urlDate.equals(DateTime.now().startOf("day"));
+  const isToday = urlDate.equals(
+    DateTime.now().setZone("America/New_York").startOf("day")
+  );
 
   return (
     <div className="space-y-10">
@@ -104,21 +126,20 @@ export default function DailyLeaderboardPage({
           </Button>
         ) : null}
       </div>
-
       <div className="space-y-5 w-full max-w-screen-md mx-auto">
-        {Array.from({ length: 11 }).map((_, index) => (
+        {loaderData.products.map((product) => (
           <ProductCard
-            key={index}
-            id={`productId-${index}`}
-            title="Product Name"
-            description="Product Description"
-            commentCount={12}
-            viewCount={12}
-            upvoteCount={120}
+            key={product.product_id}
+            id={product.product_id}
+            name={product.name}
+            description={product.description}
+            reviewsCount={product.reviews}
+            viewCount={product.views}
+            votesCount={product.upvotes}
           />
         ))}
       </div>
-      <ProductPagination totalPages={10} />
+      <ProductPagination totalPages={loaderData.totalPages} />
     </div>
   );
 }

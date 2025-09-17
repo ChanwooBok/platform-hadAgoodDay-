@@ -26,7 +26,7 @@ export const loader = async () => {
     endDate: DateTime.now().endOf("day"),
     limit: 8,
   });
-  console.log(products + "nothing");
+
   return { products };
 };
 
@@ -56,10 +56,10 @@ export default function HomePage({ loaderData }: Route.ComponentProps) {
             <Link to="/products/leaderboards">Explore all products &rarr;</Link>
           </Button>
         </div>
-        {loaderData.products.map((product, index) => (
+        {loaderData.products.map((product) => (
           <ProductCard
             key={product.product_id}
-            id={product.product_id.toString()}
+            id={product.product_id}
             name={product.name}
             description={product.description}
             reviewsCount={product.reviews}

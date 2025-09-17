@@ -14,21 +14,25 @@ export const loader = async () => {
         startDate: DateTime.now().startOf("day"),
         endDate: DateTime.now().endOf("day"),
         limit: 7,
+        page: 1,
       }),
       getProductsByDateRange({
         startDate: DateTime.now().startOf("week"),
         endDate: DateTime.now().endOf("week"),
         limit: 7,
+        page: 1,
       }),
       getProductsByDateRange({
         startDate: DateTime.now().startOf("month"),
         endDate: DateTime.now().endOf("month"),
         limit: 7,
+        page: 1,
       }),
       getProductsByDateRange({
         startDate: DateTime.now().startOf("year"),
         endDate: DateTime.now().endOf("year"),
         limit: 7,
+        page: 1,
       }),
     ]);
   return {
@@ -63,7 +67,14 @@ export default function LeaderboardsPage({ loaderData }: Route.ComponentProps) {
           <p className="text-xl font-light text-foreground">
             The best products made by our community today.
           </p>
+          <a
+            href="/products/leaderboards/daily"
+            className="text-lg self-center text-blue-500 hover:underline"
+          >
+            View Daily Leaderboard →
+          </a>
         </div>
+
         {loaderData.dailyProducts.map((product) => (
           <ProductCard
             key={product.product_id.toString()}
@@ -75,12 +86,6 @@ export default function LeaderboardsPage({ loaderData }: Route.ComponentProps) {
             votesCount={product.upvotes}
           />
         ))}
-        <a
-          href="/products/leaderboards/daily"
-          className="text-lg self-center text-blue-500 hover:underline"
-        >
-          View Daily Leaderboard →
-        </a>
       </div>
       <div className="grid grid-cols-3 gap-4">
         <div>
@@ -90,6 +95,12 @@ export default function LeaderboardsPage({ loaderData }: Route.ComponentProps) {
           <p className="text-xl font-light text-foreground">
             The best products made by our community this week.
           </p>
+          <a
+            href="/products/leaderboards/weekly"
+            className="text-lg self-center text-blue-500 hover:underline"
+          >
+            View Weekly Leaderboard →
+          </a>
         </div>
         {loaderData.weeklyProducts.map((product) => (
           <ProductCard
@@ -102,12 +113,6 @@ export default function LeaderboardsPage({ loaderData }: Route.ComponentProps) {
             votesCount={product.upvotes}
           />
         ))}
-        <a
-          href="/products/leaderboards/weekly"
-          className="text-lg self-center text-blue-500 hover:underline"
-        >
-          View Weekly Leaderboard →
-        </a>
       </div>
       <div className="grid grid-cols-3 gap-4">
         <div>
@@ -117,6 +122,13 @@ export default function LeaderboardsPage({ loaderData }: Route.ComponentProps) {
           <p className="text-xl font-light text-foreground">
             The best products made by our community this month.
           </p>
+
+          <a
+            href="/products/leaderboards/monthly"
+            className="text-lg self-center text-blue-500 hover:underline"
+          >
+            View Monthly Leaderboard →
+          </a>
         </div>
         {loaderData.monthlyProducts.map((product) => (
           <ProductCard
@@ -129,12 +141,6 @@ export default function LeaderboardsPage({ loaderData }: Route.ComponentProps) {
             votesCount={product.upvotes}
           />
         ))}
-        <a
-          href="/products/leaderboards/monthly"
-          className="text-lg self-center text-blue-500 hover:underline"
-        >
-          View Monthly Leaderboard →
-        </a>
       </div>
       <div className="grid grid-cols-3 gap-4">
         <div>
@@ -144,6 +150,12 @@ export default function LeaderboardsPage({ loaderData }: Route.ComponentProps) {
           <p className="text-xl font-light text-foreground">
             The best products made by our community this year.
           </p>
+          <a
+            href="/products/leaderboards/yearly"
+            className="text-lg self-center text-blue-500 hover:underline"
+          >
+            View Yearly Leaderboard →
+          </a>
         </div>
         {loaderData.yearlyProducts.map((product) => (
           <ProductCard
@@ -156,12 +168,6 @@ export default function LeaderboardsPage({ loaderData }: Route.ComponentProps) {
             votesCount={product.upvotes}
           />
         ))}
-        <a
-          href="/products/leaderboards/yearly"
-          className="text-lg self-center text-blue-500 hover:underline"
-        >
-          View Yearly Leaderboard →
-        </a>
       </div>
     </div>
   );
