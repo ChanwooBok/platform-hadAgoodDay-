@@ -1,12 +1,11 @@
 import type { Route } from "./+types/community-page";
 import { Button } from "~/common/components/ui/button";
-import { Await, Form, Link, useSearchParams } from "react-router";
+import { data, Form, Link, useSearchParams } from "react-router";
 import { Hero } from "~/common/components/hero";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/common/components/ui/dropdown-menu";
 import { ChevronDownIcon } from "lucide-react";
@@ -14,6 +13,8 @@ import { SORT_OPTIONS, PERIOD_OPTIONS } from "../constants";
 import { Input } from "~/common/components/ui/input";
 import { PostCard } from "../components/post-card";
 import { getPosts, getTopics } from "../queries";
+import client from "~/supa-client";
+import { z } from "zod";
 //import { Suspense } from "react";
 
 export const meta: Route.MetaFunction = () => [
@@ -35,13 +36,43 @@ export const meta: Route.MetaFunction = () => [
 //   };
 // };
 
+const searchParamsSchema = z.object({
+  sorting: z.enum(["newest", "popular"]).optional().default("newest"),
+  period: z
+    .enum(["all", "today", "week", "month", "year"])
+    .optional()
+    .default("all"),
+  keyword: z.string().optional(),
+  topic: z.string().optional(),
+});
+
 //<--- Server Loader --->
-export const loader = async () => {
-  const [topics, posts] = await Promise.all([getTopics(), getPosts()]);
-  return {
-    topics,
-    posts,
-  };
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const url = new URL(request.url);
+  const { success, data: parsedData } = searchParamsSchema.safeParse(
+    Object.fromEntries(url.searchParams)
+  );
+  if (!success) {
+    throw data(
+      {
+        error_code: "invalid_search_params",
+        message: "Invalid search params",
+      },
+      { status: 400 }
+    );
+  }
+  const [topics, posts] = await Promise.all([
+    getTopics(),
+    getPosts({
+      limit: 20,
+      sorting: parsedData.sorting,
+      period: parsedData.period,
+      keyword: parsedData.keyword,
+      topic: parsedData.topic,
+    }),
+  ]);
+
+  return { topics, posts };
 };
 
 // <--- Client Loader --->
@@ -117,7 +148,7 @@ export default function CommunityPage({ loaderData }: Route.ComponentProps) {
               <Form className="w-2/3">
                 <Input
                   type="text"
-                  name="search"
+                  name="keyword"
                   placeholder="Search for discussions"
                 />
               </Form>

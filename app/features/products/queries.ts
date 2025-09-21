@@ -6,12 +6,12 @@ export const getProductsByDateRange = async ({
   startDate,
   endDate,
   limit,
-  page,
+  page = 1,
 }: {
   startDate: DateTime;
   endDate: DateTime;
   limit: number;
-  page: number;
+  page?: number;
 }) => {
   const { data, error } = await client
     .from("products")
@@ -33,6 +33,7 @@ export const getProductsByDateRange = async ({
   return data;
 };
 
+// <- get the number of pages by date range ->
 export const getProductPagesByDateRange = async ({
   startDate,
   endDate,

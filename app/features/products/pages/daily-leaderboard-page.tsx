@@ -95,7 +95,7 @@ export default function DailyLeaderboardPage({
   });
   const previousDay = urlDate.minus({ days: 1 });
   const nextDay = urlDate.plus({ days: 1 });
-  // luxon을 써야하는 이유
+  // --> thanks to luxon, we can easily compare dates
   const isToday = urlDate.equals(
     DateTime.now().setZone("America/New_York").startOf("day")
   );
@@ -106,6 +106,7 @@ export default function DailyLeaderboardPage({
         title={`The best product of ${urlDate.toLocaleString(
           DateTime.DATE_FULL
         )}`}
+        description="The best product of the day"
       />
       <div className="flex items-center justify-center gap-2">
         <Button variant="secondary" asChild>

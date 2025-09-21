@@ -9,22 +9,23 @@ import {
 } from "~/common/components/ui/card";
 import { DotIcon, EyeIcon, HeartIcon, LockIcon } from "lucide-react";
 import { cn } from "~/lib/utils";
+import { DateTime } from "luxon";
 
 interface IdeaCardProps {
-  id: string;
+  id: number;
   title: string;
-  viewCount: number;
+  viewsCount: number;
   postedAt: string;
-  likeCount: number;
-  claimed: boolean;
+  likesCount: number;
+  claimed?: boolean;
 }
 
 export function IdeaCard({
   id,
   title,
-  viewCount,
+  viewsCount,
   postedAt,
-  likeCount,
+  likesCount,
   claimed,
 }: IdeaCardProps) {
   return (
@@ -47,15 +48,15 @@ export function IdeaCard({
       <CardContent className="flex items-center">
         <div className="flex gap-2">
           <EyeIcon className="w-4 h-4" />
-          <span>{viewCount}</span>
+          <span>{viewsCount}</span>
         </div>
         <DotIcon className="w-4 h-4" />
-        <span>{postedAt}</span>
+        <span>{DateTime.fromISO(postedAt).toRelative()}</span>
       </CardContent>
       <CardFooter className="flex justify-end gap-2">
         <Button variant="outline" className="gap-2">
           <HeartIcon className="w-4 h-4" />
-          <span>{likeCount}</span>
+          <span>{likesCount}</span>
         </Button>
         {!claimed ? (
           <Button asChild>

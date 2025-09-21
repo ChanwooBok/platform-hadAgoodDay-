@@ -1,9 +1,10 @@
 import { ProductCard } from "~/features/products/components/product-card";
 import { PostCard } from "~/features/community/components/post-card";
 import { IdeaCard } from "~/features/ideas/components/idea-card";
+import { getGptIdeas } from "~/features/ideas/queries";
 import { JobCard } from "~/features/jobs/components/job-card";
 import { TeamCard } from "~/features/teams/components/team-card";
-import { Link, type MetaFunction, type ComponentProps } from "react-router";
+import { Link, type MetaFunction } from "react-router";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -19,22 +20,22 @@ import { AvatarFallback } from "../components/ui/avatar";
 import type { Route } from "./+types/home-page";
 import { DateTime } from "luxon";
 import { getProductsByDateRange } from "~/features/products/queries";
+import { getPosts } from "~/features/community/queries";
 
 export const loader = async () => {
   const products = await getProductsByDateRange({
     startDate: DateTime.now().startOf("day"),
     endDate: DateTime.now().endOf("day"),
-    limit: 8,
+    limit: 7,
   });
-
-  return { products };
+  const posts = await getPosts({
+    limit: 7,
+    sorting: "newest",
+  });
+  const ideas = await getGptIdeas({ limit: 7 });
+  return { products, posts, ideas };
 };
-
-export function action({ request }: Route.ActionArgs) {
-  return {};
-}
-
-export function meta(): Route.MetaFunction {
+export function meta({}: Route.MetaArgs) {
   return [
     { title: "Home | Had A Good Day" },
     { name: "description", content: "Welcome to Had A Good Day" },
@@ -59,7 +60,7 @@ export default function HomePage({ loaderData }: Route.ComponentProps) {
         {loaderData.products.map((product) => (
           <ProductCard
             key={product.product_id}
-            id={product.product_id}
+            id={product.product_id.toString()}
             name={product.name}
             description={product.description}
             reviewsCount={product.reviews}
@@ -80,15 +81,16 @@ export default function HomePage({ loaderData }: Route.ComponentProps) {
             <Link to="/community">Explore all discussions &rarr;</Link>
           </Button>
         </div>
-        {Array.from({ length: 11 }).map((_, index) => (
+        {loaderData.posts.map((post) => (
           <PostCard
-            key={index}
-            id={`postId-${index}`}
-            title="What is the best productivity tool?"
-            author="woo"
-            authorAvatarUrl="https://github.com/apple.png"
-            category="Productivity"
-            postedAt="12 hours ago"
+            key={post.post_id}
+            id={post.post_id}
+            title={post.title}
+            author={post.author}
+            authorAvatarUrl={post.author_avatar}
+            category={post.topic}
+            postedAt={post.created_at}
+            votesCount={post.upvotes}
           />
         ))}
       </div>
@@ -106,15 +108,15 @@ export default function HomePage({ loaderData }: Route.ComponentProps) {
             </Link>
           </Button>
         </div>
-        {Array.from({ length: 5 }).map((_, index) => (
+        {loaderData.ideas.map((idea) => (
           <IdeaCard
-            key={index}
-            id="ideasId"
-            title="A startup that crates an AI-powered productivity tool,delivering custom AI prompts to users tracking their productivity and providing insights on their progress."
-            viewCount={123}
-            postedAt="12 hours ago"
-            likeCount={12}
-            claimed={index % 2 === 0}
+            key={idea.gpt_idea_id}
+            id={idea.gpt_idea_id}
+            title={idea.idea}
+            viewsCount={idea.views}
+            postedAt={idea.created_at}
+            likesCount={idea.likes}
+            claimed={idea.is_claimed}
           />
         ))}
       </div>
