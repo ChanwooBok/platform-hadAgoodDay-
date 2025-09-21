@@ -128,13 +128,6 @@ export type Database = {
             referencedColumns: ["gpt_idea_id"]
           },
           {
-            foreignKeyName: "gpt_ideas_likes_gpt_idea_id_gpt_ideas_gpt_idea_id_fk"
-            columns: ["gpt_idea_id"]
-            isOneToOne: false
-            referencedRelation: "gpt_ideas_view"
-            referencedColumns: ["gpt_idea_id"]
-          },
-          {
             foreignKeyName: "gpt_ideas_likes_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
             isOneToOne: false
@@ -217,13 +210,6 @@ export type Database = {
           profile_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "message_room_members_message_room_id_message_rooms_message_room"
-            columns: ["message_room_id"]
-            isOneToOne: false
-            referencedRelation: "message_rooms"
-            referencedColumns: ["message_room_id"]
-          },
           {
             foreignKeyName: "message_room_members_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
@@ -320,13 +306,6 @@ export type Database = {
             foreignKeyName: "notifications_post_id_posts_post_id_fk"
             columns: ["post_id"]
             isOneToOne: false
-            referencedRelation: "community_post_list_view"
-            referencedColumns: ["post_id"]
-          },
-          {
-            foreignKeyName: "notifications_post_id_posts_post_id_fk"
-            columns: ["post_id"]
-            isOneToOne: false
             referencedRelation: "posts"
             referencedColumns: ["post_id"]
           },
@@ -393,13 +372,6 @@ export type Database = {
             foreignKeyName: "post_replies_post_id_posts_post_id_fk"
             columns: ["post_id"]
             isOneToOne: false
-            referencedRelation: "community_post_list_view"
-            referencedColumns: ["post_id"]
-          },
-          {
-            foreignKeyName: "post_replies_post_id_posts_post_id_fk"
-            columns: ["post_id"]
-            isOneToOne: false
             referencedRelation: "posts"
             referencedColumns: ["post_id"]
           },
@@ -426,13 +398,6 @@ export type Database = {
           profile_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "post_upvotes_post_id_posts_post_id_fk"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "community_post_list_view"
-            referencedColumns: ["post_id"]
-          },
           {
             foreignKeyName: "post_upvotes_post_id_posts_post_id_fk"
             columns: ["post_id"]
@@ -733,31 +698,7 @@ export type Database = {
       }
     }
     Views: {
-      community_post_list_view: {
-        Row: {
-          author: string | null
-          author_avatar: string | null
-          author_username: string | null
-          created_at: string | null
-          post_id: number | null
-          title: string | null
-          topic: string | null
-          topic_slug: string | null
-          upvotes: number | null
-        }
-        Relationships: []
-      }
-      gpt_ideas_view: {
-        Row: {
-          created_at: string | null
-          gpt_idea_id: number | null
-          idea: string | null
-          is_claimed: boolean | null
-          likes: number | null
-          views: number | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       [_ in never]: never

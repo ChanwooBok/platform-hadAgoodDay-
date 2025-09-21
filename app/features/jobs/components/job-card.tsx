@@ -8,18 +8,18 @@ import {
   CardHeader,
   CardTitle,
 } from "~/common/components/ui/card";
+import { DateTime } from "luxon";
 
 interface JobCardProps {
-  id: string;
+  id: number;
   title: string;
   company: string;
   companyLogoUrl: string;
   companyHq: string;
   postedAt: string;
   type: string;
-  positionLocation: string;
-  salary: string;
   locationType: string;
+  salary: string;
 }
 
 export function JobCard({
@@ -30,9 +30,8 @@ export function JobCard({
   companyHq,
   postedAt,
   type,
-  positionLocation,
-  salary,
   locationType,
+  salary,
 }: JobCardProps) {
   return (
     <Link to={`/jobs/${id}`}>
@@ -46,14 +45,18 @@ export function JobCard({
             />
             <div className="space-x-2">
               <span>{company}</span>
-              <span>{postedAt}</span>
+              <span>{DateTime.fromISO(postedAt).toRelative()}</span>
             </div>
           </div>
           <CardTitle>{title}</CardTitle>
         </CardHeader>
         <CardContent>
-          <Badge variant="outline">{type}</Badge>
-          <Badge variant="outline">{locationType}</Badge>
+          <Badge variant="outline" className="capitalize">
+            {type}
+          </Badge>
+          <Badge variant="outline" className="capitalize">
+            {locationType}
+          </Badge>
         </CardContent>
         <CardFooter className="flex justify-between">
           <div className="flex flex-col">
