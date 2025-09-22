@@ -119,3 +119,13 @@ export const getPagesBySearch = async ({ query }: { query: string }) => {
   if (!count) return 1;
   return Math.ceil(count / PAGE_SIZE);
 };
+
+export const getProductById = async (productId: number) => {
+  const { data, error } = await client
+    .from("product_overview_view") // when we get data from view, we get object that is nullable -> we can fix it in supa-client
+    .select("*")
+    .eq("product_id", productId)
+    .single();
+  if (error) throw error;
+  return data;
+};
