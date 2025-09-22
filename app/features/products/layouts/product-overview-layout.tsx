@@ -100,6 +100,7 @@ export default function ProductOverviewLayout({
             product_id: loaderData.product.product_id,
             how_it_works: loaderData.product.how_it_works,
             description: loaderData.product.description,
+            review_count: loaderData.product.reviews,
           }}
         />
       </div>
