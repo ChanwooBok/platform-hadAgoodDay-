@@ -1,8 +1,24 @@
 import type { MetaFunction } from "react-router";
-import type { Route } from "./+types/category-page";
 import { ProductCard } from "../components/product-card";
 import { Hero } from "~/common/components/hero";
+import type { Route } from "./+types/category-page";
 import ProductPagination from "~/common/components/product-pagination";
+import {
+  getCategory,
+  getCategoryPages,
+  getProductsByCategory,
+} from "../queries";
+import { z } from "zod";
+
+const paramsSchema = z.object({
+  categoryId: z.coerce.number(),
+});
+
+export const loader = async ({ params }: Route.LoaderArgs) => {
+  const category = await getCategory(Number(params.categoryId));
+
+  return { category };
+};
 
 export const meta: Route.MetaFunction = () => {
   return [
@@ -11,28 +27,14 @@ export const meta: Route.MetaFunction = () => {
   ];
 };
 
-export default function CategoryPage({}) {
+export default function CategoryPage({ loaderData }: Route.ComponentProps) {
   return (
     <div className="space-y-10">
       <Hero
-        title={"Developer Tools"}
-        description={`Tools for developers to build products faster`}
+        title={loaderData.category.name}
+        description={loaderData.category.description}
       />
-
-      <div className="space-y-5 w-full max-w-screen-md mx-auto">
-        {Array.from({ length: 11 }).map((_, index) => (
-          <ProductCard
-            key={index}
-            id={`productId-${index}`}
-            title="Product Name"
-            description="Product Description"
-            commentCount={12}
-            viewCount={12}
-            upvoteCount={120}
-          />
-        ))}
-      </div>
-      <ProductPagination totalPages={10} />
+      <div className="space-y-5 w-full max-w-screen-md mx-auto"></div>
     </div>
   );
 }

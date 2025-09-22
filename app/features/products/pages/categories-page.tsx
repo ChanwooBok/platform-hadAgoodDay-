@@ -1,6 +1,13 @@
 import type { MetaFunction } from "react-router";
 import { Hero } from "../../../common/components/hero";
 import { CategoryCard } from "../components/category-card";
+import { getCategories } from "../queries";
+import type { Route } from "./+types/categories-page";
+
+export const loader = async () => {
+  const categories = await getCategories();
+  return { categories };
+};
 
 export const meta: MetaFunction = () => {
   return [
@@ -9,25 +16,17 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export function loader({ request }: { request: Request }) {
-  return {};
-}
-
-export function action({ request }: { request: Request }) {
-  return {};
-}
-
-export default function CategoriesPage() {
+export default function CategoriesPage({ loaderData }: Route.ComponentProps) {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="space-y-10">
       <Hero title="Categories" description="Browse products by category" />
       <div className="grid grid-cols-4 gap-10">
-        {Array.from({ length: 10 }).map((_, index) => (
+        {loaderData.categories.map((category) => (
           <CategoryCard
-            key={`categoryId-${index}`}
-            id={`categoryId-${index}`}
-            name="Category Name"
-            description="Category Description"
+            key={category.category_id}
+            id={category.category_id}
+            name={category.name}
+            description={category.description}
           />
         ))}
       </div>

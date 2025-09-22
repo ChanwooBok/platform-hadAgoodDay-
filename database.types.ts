@@ -128,6 +128,13 @@ export type Database = {
             referencedColumns: ["gpt_idea_id"]
           },
           {
+            foreignKeyName: "gpt_ideas_likes_gpt_idea_id_gpt_ideas_gpt_idea_id_fk"
+            columns: ["gpt_idea_id"]
+            isOneToOne: false
+            referencedRelation: "gpt_ideas_view"
+            referencedColumns: ["gpt_idea_id"]
+          },
+          {
             foreignKeyName: "gpt_ideas_likes_profile_id_profiles_profile_id_fk"
             columns: ["profile_id"]
             isOneToOne: false
@@ -306,6 +313,13 @@ export type Database = {
             foreignKeyName: "notifications_post_id_posts_post_id_fk"
             columns: ["post_id"]
             isOneToOne: false
+            referencedRelation: "community_post_list_view"
+            referencedColumns: ["post_id"]
+          },
+          {
+            foreignKeyName: "notifications_post_id_posts_post_id_fk"
+            columns: ["post_id"]
+            isOneToOne: false
             referencedRelation: "posts"
             referencedColumns: ["post_id"]
           },
@@ -372,6 +386,13 @@ export type Database = {
             foreignKeyName: "post_replies_post_id_posts_post_id_fk"
             columns: ["post_id"]
             isOneToOne: false
+            referencedRelation: "community_post_list_view"
+            referencedColumns: ["post_id"]
+          },
+          {
+            foreignKeyName: "post_replies_post_id_posts_post_id_fk"
+            columns: ["post_id"]
+            isOneToOne: false
             referencedRelation: "posts"
             referencedColumns: ["post_id"]
           },
@@ -398,6 +419,13 @@ export type Database = {
           profile_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "post_upvotes_post_id_posts_post_id_fk"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_post_list_view"
+            referencedColumns: ["post_id"]
+          },
           {
             foreignKeyName: "post_upvotes_post_id_posts_post_id_fk"
             columns: ["post_id"]
@@ -639,7 +667,7 @@ export type Database = {
           },
         ]
       }
-      team: {
+      teams: {
         Row: {
           created_at: string
           equity_split: number
@@ -648,6 +676,7 @@ export type Database = {
           product_stage: Database["public"]["Enums"]["product_stage"]
           roles: string
           team_id: number
+          team_leader_id: string | null
           team_size: number
           updated_at: string
         }
@@ -658,7 +687,8 @@ export type Database = {
           product_name: string
           product_stage: Database["public"]["Enums"]["product_stage"]
           roles: string
-          team_id?: never
+          team_id?: number
+          team_leader_id?: string | null
           team_size: number
           updated_at?: string
         }
@@ -669,11 +699,20 @@ export type Database = {
           product_name?: string
           product_stage?: Database["public"]["Enums"]["product_stage"]
           roles?: string
-          team_id?: never
+          team_id?: number
+          team_leader_id?: string | null
           team_size?: number
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "teams_team_leader_id_fkey"
+            columns: ["team_leader_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["profile_id"]
+          },
+        ]
       }
       topics: {
         Row: {
@@ -698,7 +737,31 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      community_post_list_view: {
+        Row: {
+          author: string | null
+          author_avatar: string | null
+          author_username: string | null
+          created_at: string | null
+          post_id: number | null
+          title: string | null
+          topic: string | null
+          topic_slug: string | null
+          upvotes: number | null
+        }
+        Relationships: []
+      }
+      gpt_ideas_view: {
+        Row: {
+          created_at: string | null
+          gpt_idea_id: number | null
+          idea: string | null
+          is_claimed: boolean | null
+          likes: number | null
+          views: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never

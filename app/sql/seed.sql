@@ -84,12 +84,12 @@ INSERT INTO gpt_ideas (idea, views, claimed_by) VALUES
 -- ==============================================
 -- TEAMS (5 rows)
 -- ==============================================
-INSERT INTO team (product_name, team_size, equity_split, product_stage, roles, product_description) VALUES
-('EcoTracker', 4, 25, 'mvp', 'Frontend Developer, Backend Developer, Designer, Product Manager', 'An app that helps users track their carbon footprint and suggests eco-friendly alternatives'),
-('HealthConnect', 6, 20, 'prototype', 'Full-stack Developer, Mobile Developer, UX Designer, Data Scientist, Marketing Lead, CEO', 'Platform connecting patients with healthcare providers for virtual consultations'),
-('EduTech Pro', 3, 33, 'idea', 'Lead Developer, Designer, Content Creator', 'Interactive learning platform for coding bootcamps with AI-powered personalized curriculum'),
-('FinanceFlow', 5, 20, 'product', 'Backend Developer, Frontend Developer, DevOps Engineer, Financial Analyst, Product Manager', 'Personal finance management tool with automated budgeting and investment recommendations'),
-('SocialSync', 7, 15, 'mvp', 'Mobile Developer, Backend Developer, Frontend Developer, Designer, Marketing Specialist, Community Manager, CEO', 'Social media management platform for small businesses with AI content generation');
+INSERT INTO teams (product_name, team_size, equity_split, product_stage, roles, product_description, team_leader_id) VALUES
+('EcoTracker', 4, 25, 'mvp', 'Frontend Developer, Backend Developer, Designer, Product Manager', 'An app that helps users track their carbon footprint and suggests eco-friendly alternatives', 'e0143721-d889-49cb-9bfa-1872e853a7c0'),
+('HealthConnect', 6, 20, 'prototype', 'Full-stack Developer, Mobile Developer, UX Designer, Data Scientist, Marketing Lead, CEO', 'Platform connecting patients with healthcare providers for virtual consultations', 'e0143721-d889-49cb-9bfa-1872e853a7c0'),
+('EduTech Pro', 3, 33, 'idea', 'Lead Developer, Designer, Content Creator', 'Interactive learning platform for coding bootcamps with AI-powered personalized curriculum)','e0143721-d889-49cb-9bfa-1872e853a7c0'),
+('FinanceFlow', 5, 20, 'product', 'Backend Developer, Frontend Developer, DevOps Engineer, Financial Analyst, Product Manager', 'Personal finance management tool with automated budgeting and investment recommendations', 'e0143721-d889-49cb-9bfa-1872e853a7c0'),
+('SocialSync', 7, 15, 'mvp', 'Mobile Developer, Backend Developer, Frontend Developer, Designer, Marketing Specialist, Community Manager, CEO', 'Social media management platform for small businesses with AI content generation', 'e0143721-d889-49cb-9bfa-1872e853a7c0');
 
 -- ==============================================
 -- MESSAGE ROOMS (5 rows)

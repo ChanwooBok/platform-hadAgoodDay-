@@ -2,7 +2,15 @@ import type { MetaFunction as RouterMetaFunction } from "react-router";
 
 export namespace Route {
   export type LoaderData = {
-    // Add loader data types here
+    teams: Array<{
+      team_id: number;
+      roles: string;
+      product_description: string;
+      team_leader: {
+        username: string;
+        avatar: string;
+      };
+    }>;
   };
 
   export type ActionData = {
@@ -10,4 +18,8 @@ export namespace Route {
   };
 
   export type MetaFunction = RouterMetaFunction;
+
+  export type ComponentProps = {
+    loaderData: LoaderData;
+  };
 }

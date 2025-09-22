@@ -22,6 +22,7 @@ import { DateTime } from "luxon";
 import { getProductsByDateRange } from "~/features/products/queries";
 import { getPosts } from "~/features/community/queries";
 import { getJobs } from "~/features/jobs/queries";
+import { getTeams } from "~/features/teams/queries";
 
 export const loader = async () => {
   const products = await getProductsByDateRange({
@@ -35,7 +36,8 @@ export const loader = async () => {
   });
   const ideas = await getGptIdeas({ limit: 7 });
   const jobs = await getJobs({ limit: 5 });
-  return { products, posts, ideas, jobs };
+  const teams = await getTeams({ limit: 7 });
+  return { products, posts, ideas, jobs, teams };
 };
 export function meta({}: Route.MetaArgs) {
   return [
@@ -161,17 +163,16 @@ export default function HomePage({ loaderData }: Route.ComponentProps) {
             <Link to="/teams">Explore all teams &rarr;</Link>
           </Button>
         </div>
-        <TeamCard
-          id="teamId"
-          leaderUsername="Em"
-          leaderAvatarUrl="https://github.com/chanwooBok.png"
-          positions={[
-            "backend engineer",
-            "full-stack engineer",
-            "frontend engineer",
-          ]}
-          project="a startup"
-        />
+        {loaderData.teams.map((team) => (
+          <TeamCard
+            key={team.team_id}
+            id={team.team_id}
+            leaderUsername={team.team_leader.username || ""}
+            leaderAvatarUrl={team.team_leader.avatar || ""}
+            positions={team.roles.split(",")}
+            project={team.product_description}
+          />
+        ))}
       </div>
     </div>
   );
