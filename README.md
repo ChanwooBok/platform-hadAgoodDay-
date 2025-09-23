@@ -29,7 +29,7 @@ I approached this project as if it were a real-world internship:
 - **Frontend:** React (TypeScript), React Router, Tailwind CSS  
 - **Backend:** Drizzle ORM, PostgreSQL  
 - **Validation:** Zod  
-- **Tooling:** Vite, GitHub  
+- **Tooling:** GitHub  
 
 ---
 
