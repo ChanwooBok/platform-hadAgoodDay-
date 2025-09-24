@@ -1,7 +1,5 @@
-import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { Button } from "~/common/components/ui/button";
 import { AvatarFallback } from "~/common/components/ui/avatar";
-import { StarIcon } from "lucide-react";
 import { ReviewCard } from "../components/review-card";
 import { Dialog, DialogTrigger } from "~/common/components/ui/dialog";
 import { CreateReviewDialog } from "~/common/components/create-review-dialog";
