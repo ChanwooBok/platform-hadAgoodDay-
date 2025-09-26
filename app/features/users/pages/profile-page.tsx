@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "~/common/components/ui/card";
 import { Button } from "~/common/components/ui/button";
-import { Link } from "react-router";
+import { Link, useOutletContext } from "react-router";
 
 export const meta: Route.MetaFunction = () => [
   { title: "User Profile" },
@@ -14,20 +14,20 @@ export const meta: Route.MetaFunction = () => [
 ];
 
 export default function ProfilePage() {
+  const { headline, bio } = useOutletContext<{
+    headline: string;
+    bio: string;
+  }>();
   return (
     <div className="max-w-screen-md flex flex-col space-y-10">
       <div>
         <h4 className="text-lg font-semibold">Headline</h4>
-        <p className="text-sm text-muted-foreground">
-          I am a product designer based in San Francisco
-        </p>
+        <p className="text-sm text-muted-foreground">{headline}</p>
       </div>
 
       <div>
-        <h4 className="text-lg font-semibold">About</h4>
-        <p className="text-sm text-muted-foreground">
-          I am a product designer based in San Francisco
-        </p>
+        <h4 className="text-lg font-semibold">Bio</h4>
+        <p className="text-sm text-muted-foreground">{bio}</p>
       </div>
     </div>
   );

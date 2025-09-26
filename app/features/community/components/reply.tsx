@@ -8,44 +8,55 @@ import { Form, Link } from "react-router";
 import { DotIcon, MessageCircleIcon } from "lucide-react";
 import { useState } from "react";
 import { Textarea } from "~/common/components/ui/textarea";
+import { DateTime } from "luxon";
 interface ReplyProps {
-  id: string;
+  username: string;
+  avatarUrl: string | null;
   content: string;
-  author: {
-    id: string;
-    username: string;
-    avatarUrl?: string;
-  };
-  createdAt: string;
+  timestamp: string;
+  topLevel: boolean;
+
+  replies?: {
+    post_reply_id: number;
+    reply: string;
+    created_at: string;
+    user: {
+      name: string;
+      avatar: string | null;
+      username: string;
+    };
+  }[];
   onReply?: () => void;
-  topLevel?: boolean;
 }
 
 export function Reply({
-  id,
+  username,
+  avatarUrl,
   content,
-  author,
-  createdAt,
+  timestamp,
   onReply,
   topLevel = false,
+  replies,
 }: ReplyProps) {
   const [replying, setReplying] = useState(false);
   const toggleReply = () => setReplying((prev) => !prev);
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 w-full">
       <div className="flex flex-col items-start gap-5">
         <Avatar className="size-14">
-          <AvatarFallback>{author.username[0].toUpperCase()}</AvatarFallback>
-          <AvatarImage src={author.avatarUrl} />
+          <AvatarFallback>{username[0].toUpperCase()}</AvatarFallback>
+          {avatarUrl ? <AvatarImage src={avatarUrl} /> : null}
         </Avatar>
-        <div className="flex flex-col gap-4 items-start">
+        <div className="flex flex-col gap-4 items-start w-full">
           <div className="flex items-center gap-2">
-            <Link to={`/user/@${author.username}`}>
-              <h4 className="font-bold">{author.username}</h4>
+            <Link to={`/user/@${username}`}>
+              <h4 className="font-bold">{username}</h4>
             </Link>
             <DotIcon className="size-5" />
-            <span className="text-sm text-muted-foreground">{createdAt}</span>
+            <span className="text-sm text-muted-foreground">
+              {DateTime.fromISO(timestamp).toRelative()}
+            </span>
           </div>
           <p>{content}</p>
           {onReply && (
@@ -73,19 +84,17 @@ export function Reply({
         </div>
       </div>
 
-      {topLevel && (
-        <div className="pl-10 w-full">
-          <Reply
-            id="1"
-            content="I'm using todolist, it is okay, but I dream of a tool that can help me manage my tasks and projects. Any recommendations?"
-            author={{
-              id: "1",
-              username: "woo",
-              avatarUrl: "https://github.com/chanwoobok.png",
-            }}
-            createdAt="12 hours ago"
-            onReply={() => {}}
-          />
+      {topLevel && replies && (
+        <div className="pl-20 w-full">
+          {replies.map((reply) => (
+            <Reply
+              username={reply.user.name}
+              avatarUrl={reply.user.avatar}
+              content={reply.reply}
+              timestamp={reply.created_at}
+              topLevel={false}
+            />
+          ))}
         </div>
       )}
     </div>

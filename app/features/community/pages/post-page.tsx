@@ -24,7 +24,7 @@ import {
 } from "~/common/components/ui/avatar";
 import { Badge } from "~/common/components/ui/badge";
 import { Reply } from "../components/reply";
-import { getPostById } from "../queries";
+import { getPostById, getReplies } from "../queries";
 import { DateTime } from "luxon";
 
 export const meta: Route.MetaFunction = () => [
@@ -34,7 +34,9 @@ export const meta: Route.MetaFunction = () => [
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
   const post = await getPostById(params.postId);
-  return { post };
+  const replies = await getReplies(params.postId);
+  console.log(replies);
+  return { post, replies };
 };
 
 export default function PostPage({ loaderData }: Route.ComponentProps) {
@@ -72,7 +74,7 @@ export default function PostPage({ loaderData }: Route.ComponentProps) {
               <ChevronUpIcon className="size-4 shrink-0" />
               <span>{loaderData.post.upvotes}</span>
             </Button>
-            <div className="space-y-20">
+            <div className="space-y-20 w-full">
               <div className="space-y-2">
                 <h2 className="text-3xl font-bold">{loaderData.post.title}</h2>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -106,22 +108,18 @@ export default function PostPage({ loaderData }: Route.ComponentProps) {
                 <h4 className="text-lg font-bold">
                   {loaderData.post.replies} replies
                 </h4>
-                <Reply
-                  id={loaderData.post.post_id}
-                  content={loaderData.post.content}
-                  author={{
-                    id: loaderData.post.author_id,
-                    username: loaderData.post.author_name,
-                    avatarUrl: loaderData.post.author_avatar,
-                  }}
-                  createdAt={DateTime.fromISO(
-                    loaderData.post.created_at
-                  ).toRelative()}
-                  onReply={() => {
-                    // Handle reply click
-                  }}
-                  topLevel
-                />
+                <div className="flex flex-col gap-5">
+                  {loaderData.replies.map((reply) => (
+                    <Reply
+                      username={reply.user.name}
+                      avatarUrl={reply.user.avatar}
+                      content={reply.reply}
+                      timestamp={reply.created_at}
+                      topLevel={true}
+                      replies={reply.post_replies}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>

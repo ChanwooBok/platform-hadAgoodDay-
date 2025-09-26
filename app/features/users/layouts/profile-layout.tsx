@@ -1,5 +1,4 @@
 import { Form, NavLink, Outlet } from "react-router";
-import type { Route } from "../pages/+types/profile-page";
 import {
   Avatar,
   AvatarFallback,
@@ -17,22 +16,35 @@ import { Badge } from "~/common/components/ui/badge";
 import { DialogHeader, DialogContent } from "~/common/components/ui/dialog";
 import { Textarea } from "~/common/components/ui/textarea";
 import { cn } from "~/lib/utils";
+import type { Route } from "./+types/profile-layout";
+import { getUserProfile } from "../queries";
+
 export const meta: Route.MetaFunction = () => [
   { title: "User Profile" },
   { name: "description", content: "View user profile" },
 ];
 
-export default function ProfileLayout() {
+export const loader = async ({
+  params,
+}: Route.LoaderArgs & { params: { username: string } }) => {
+  const user = await getUserProfile(params.username);
+  return { user };
+};
+
+export default function ProfileLayout({ loaderData }: Route.ComponentProps) {
   return (
     <div className="space-y-20">
       <div className="flex items-center gap-4">
         <Avatar className="size-40">
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>CN</AvatarFallback>
+          {loaderData.user.avatar ? (
+            <AvatarImage src={loaderData.user.avatar} />
+          ) : (
+            <AvatarFallback>{loaderData.user.name[0]}</AvatarFallback>
+          )}
         </Avatar>
         <div className="space-y-5">
           <div className="flex gap-2">
-            <h1>John Doe</h1>
+            <h1>{loaderData.user.name}</h1>
             <Button variant="outline" asChild>
               <Link to="/my/settings">Edit Profile</Link>
             </Button>
@@ -47,7 +59,7 @@ export default function ProfileLayout() {
                 </DialogHeader>
                 <DialogDescription>
                   <span className="text-sm text-muted-foreground">
-                    send a message to John Doe
+                    send a message to {loaderData.user.name}
                   </span>
 
                   <Form>
@@ -63,8 +75,10 @@ export default function ProfileLayout() {
             </Dialog>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">@John doe</span>
-            <Badge variant="secondary">Product Designer</Badge>
+            <span className="text-sm text-muted-foreground">
+              @{loaderData.user.username}
+            </span>
+            <Badge variant="secondary">{loaderData.user.role}</Badge>
             <Badge variant="secondary">100 followers</Badge>
             <Badge variant="secondary">100 following</Badge>
           </div>
@@ -72,9 +86,12 @@ export default function ProfileLayout() {
       </div>
       <div className="flex gap-5">
         {[
-          { label: "About", to: "/users/username" },
-          { label: "Products", to: "/users/username/products" },
-          { label: "Posts", to: "/users/username/posts" },
+          { label: "About", to: `/users/${loaderData.user.username}` },
+          {
+            label: "Products",
+            to: `/users/${loaderData.user.username}/products`,
+          },
+          { label: "Posts", to: `/users/${loaderData.user.username}/posts` },
         ].map((item) => (
           <NavLink
             end
@@ -91,7 +108,12 @@ export default function ProfileLayout() {
           </NavLink>
         ))}
       </div>
-      <Outlet />
+      <Outlet
+        context={{
+          headline: loaderData.user.headline,
+          bio: loaderData.user.bio,
+        }}
+      />
     </div>
   );
 }
