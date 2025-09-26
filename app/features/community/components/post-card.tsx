@@ -45,18 +45,22 @@ export function PostCard({
         )}
       >
         <CardHeader>
-          <Avatar>
-            <AvatarFallback>{author[0]}</AvatarFallback>
-            {authorAvatarUrl && <AvatarImage src={authorAvatarUrl} />}
-          </Avatar>
           <div className="space-y-2">
-            <CardTitle>{title}</CardTitle>
-            <div className="flex gap-2 text-sm leading-tight text-muted-foreground">
-              <span>
-                {author} on {category}
-              </span>
-              <DotIcon className="w-4 h-4" />
-              <span>{DateTime.fromISO(postedAt).toRelative()}</span>
+            <div className="flex items-center gap-3">
+              <Avatar className="w-8 h-8">
+                <AvatarFallback>{author[0]}</AvatarFallback>
+                {authorAvatarUrl && <AvatarImage src={authorAvatarUrl} />}
+              </Avatar>
+              <div className="flex-1">
+                <CardTitle className="text-base">{title}</CardTitle>
+                <div className="flex gap-2 text-sm leading-tight text-muted-foreground">
+                  <span>
+                    {author} on {category}
+                  </span>
+                  <DotIcon className="w-4 h-4" />
+                  <span>{DateTime.fromISO(postedAt).toRelative()}</span>
+                </div>
+              </div>
             </div>
           </div>
         </CardHeader>

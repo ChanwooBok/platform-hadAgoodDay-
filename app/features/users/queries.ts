@@ -43,26 +43,17 @@ export const getUserProducts = async (username: string) => {
       )
     `
     )
-    .eq("profile_id", profileId);
+    .eq("profile_id", profileId)
+    .order("created_at", { ascending: false });
   if (error) throw error;
   return data;
 };
 
 export const getUserPosts = async (username: string) => {
-  const profileId = await getProfileIdByUsername(username);
   const { data, error } = await client
-    .from("posts")
-    .select(
-      `
-      *,
-      profile:profiles!profile_id (
-        name,
-        avatar
-      )
-    `
-    )
-    .eq("profile_id", profileId)
-    .order("created_at", { ascending: false });
+    .from("community_post_list_view")
+    .select("*")
+    .eq("author_username", username);
   if (error) throw error;
   return data;
 };

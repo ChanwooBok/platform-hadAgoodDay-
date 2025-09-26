@@ -10,7 +10,6 @@ export const meta: Route.MetaFunction = () => [
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
   const posts = await getUserPosts(params.username);
-  console.log(posts);
   return { posts };
 };
 
@@ -22,10 +21,10 @@ export default function ProfilePostsPage({ loaderData }: Route.ComponentProps) {
           key={post.post_id}
           id={post.post_id}
           title={post.title}
-          author={post.profile.name}
-          authorAvatarUrl={post.profile.avatar}
-          category="Productivity"
-          postedAt="12 hours ago"
+          author={post.author}
+          authorAvatarUrl={post.author_avatar}
+          category={post.topic}
+          postedAt={post.created_at}
           expanded
         />
       ))}
