@@ -130,3 +130,13 @@ export const getPosts = async ({
 //   .select(`*`);
 // if (error) throw new Error(error.message);
 // return data;
+
+export const getPostById = async (postId: string) => {
+  const { data, error } = await client
+    .from("community_post_detail")
+    .select("*")
+    .eq("post_id", Number(postId))
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+};

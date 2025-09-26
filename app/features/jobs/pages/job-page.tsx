@@ -2,6 +2,9 @@ import { DotIcon } from "lucide-react";
 import type { Route } from "./+types/job-page";
 import { Badge } from "~/common/components/ui/badge";
 import { Button } from "~/common/components/ui/button";
+import { getJobById } from "../queries";
+import { DateTime } from "luxon";
+
 export const meta: Route.MetaFunction = () => {
   return [
     { title: "Job Details | Had A Good Day" },
@@ -9,7 +12,13 @@ export const meta: Route.MetaFunction = () => {
   ];
 };
 
-export default function JobPage() {
+export const loader = async ({ params }: Route.LoaderArgs) => {
+  const job = await getJobById(Number(params.jobId));
+  return { job };
+};
+
+export default function JobPage({ loaderData }: Route.ComponentProps) {
+  const { job } = loaderData;
   return (
     <div className="space-x-10">
       <div className="bg-gradient-to-tr from-primary/80 to-primary/10 h-60 w-full rounded-lg"></div>
@@ -17,22 +26,24 @@ export default function JobPage() {
         <div className="col-span-4 space-y-10">
           <div>
             <img
-              src="https://github.com/facebook.png"
+              src={job.company_logo}
               className="rounded-full border-2 border-white size-40 relative"
             />
-            <h1 className="text-4xl font-bold">Software Engineer</h1>
-            <h4 className="text-lg text-muted-foreground">Meta Inc.</h4>
+            <h1 className="text-4xl font-bold">{job.position}</h1>
+            <h4 className="text-lg text-muted-foreground">
+              {job.company_name}
+            </h4>
           </div>
 
-          <div>
-            <Badge>Full-time</Badge>
-            <Badge>Remote</Badge>
+          <div className="flex gap-2 capitalize">
+            <Badge variant={"secondary"}>{loaderData.job.job_type}</Badge>
+            <Badge variant={"secondary"}>{loaderData.job.location_type}</Badge>
           </div>
 
           <div className="space-y-2.5">
             <h4 className="text-2xl font-bold">Overview</h4>
-            <p className="text-sm text-muted-foreground">
-              This is full-time remote job. What you need to do is to build
+            <p className="text-lg">
+              {job.overview}
               features for the company's product.
             </p>
           </div>
@@ -40,13 +51,7 @@ export default function JobPage() {
           <div className="space-y-2.5">
             <h4 className="text-2xl font-bold">Responsibilities</h4>
             <ul className="text-lg list-disc list-inside">
-              {[
-                "Designing and building features for the company's product",
-                "Writing code in JavaScript and TypeScript",
-                "Writing code in React and Next.js",
-                "Writing code in Tailwind CSS and Shadcn UI",
-                "Writing code in React and Next.js",
-              ].map((item) => (
+              {loaderData.job.responsibilities.split(",").map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
@@ -55,13 +60,7 @@ export default function JobPage() {
           <div className="space-y-2.5">
             <h4 className="text-2xl font-bold">Qualifications</h4>
             <ul className="text-lg list-disc list-inside">
-              {[
-                "Bachelor's degree in Computer Science or related field",
-                "3+ years of experience in software development",
-                "Strong understanding of React and Next.js",
-                "Strong understanding of Tailwind CSS and Shadcn UI",
-                "Strong understanding of React and Next.js",
-              ].map((item) => (
+              {loaderData.job.qualifications.split(",").map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
@@ -70,11 +69,7 @@ export default function JobPage() {
           <div className="space-y-2.5">
             <h4 className="text-2xl font-bold">Benefits</h4>
             <ul className="text-lg list-disc list-inside">
-              {[
-                "Flexible working hours",
-                "Remote work",
-                "Health insurance",
-              ].map((item) => (
+              {loaderData.job.benefits.split(",").map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
@@ -83,7 +78,7 @@ export default function JobPage() {
           <div className="space-y-2.5">
             <h4 className="text-2xl font-bold">Skills</h4>
             <ul className="text-lg list-disc list-inside">
-              {["React", "Next.js", "Tailwind CSS"].map((item) => (
+              {loaderData.job.skills.split(",").map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
@@ -92,28 +87,30 @@ export default function JobPage() {
 
         <div className="col-span-2 space-y-5 mt-32 sticky p-6 top-20 border rounded-lg">
           <div className="flex flex-col">
-            <span className="text-sm text-muted-foreground">Avg. Salary</span>
-            <span className="text-2xl font-bold">$100,000 - $120,000</span>
+            <span className="text-lg text-muted-foreground">Avg. Salary</span>
+            <span className="text-2xl font-bold">{job.salary_range}</span>
           </div>
 
           <div className="flex flex-col">
             <span className="text-sm text-muted-foreground">Location</span>
-            <span className="text-2xl font-bold">Remote</span>
+            <span className="text-2xl font-bold">{job.location_type}</span>
           </div>
 
           <div className="flex flex-col">
             <span className="text-sm text-muted-foreground">
               Employment Type
             </span>
-            <span className="text-2xl font-bold">Full-time</span>
+            <span className="text-2xl font-bold">{job.job_type}</span>
           </div>
 
           <div className="flex">
             <span className="text-sm text-muted-foreground">
-              Posted 2 days ago
+              Posted {DateTime.fromISO(job.created_at).toRelative()} ago
             </span>
             <DotIcon className="size-4" />
-            <span className="text-sm text-muted-foreground">395 views</span>
+            <span className="text-sm text-muted-foreground">
+              {loaderData.job.views} views
+            </span>
           </div>
           <Button className="w-full">Apply Now</Button>
         </div>
