@@ -18,7 +18,7 @@ export const productStage = pgEnum(
 );
 
 export const team = pgTable(
-  "teams",
+  "team",
   {
     team_id: bigint({ mode: "number" })
       .primaryKey()
