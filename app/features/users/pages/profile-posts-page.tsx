@@ -1,7 +1,6 @@
 import { PostCard } from "~/features/community/components/post-card";
 import type { Route } from "./+types/profile-posts-page";
 import { getUserPosts } from "../queries";
-import { DateTime } from "luxon";
 
 export const meta: Route.MetaFunction = () => [
   { title: "User Posts" },
