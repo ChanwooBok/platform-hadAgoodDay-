@@ -7,6 +7,17 @@ import {
 } from "~/common/components/ui/card";
 import { Button } from "~/common/components/ui/button";
 import { Link, useOutletContext } from "react-router";
+import client from "~/supa-client";
+
+const loader = async ({ params }: Route.LoaderArgs) => {
+  await client.rpc("track_event", {
+    event_type: "profile_view",
+    event_data: {
+      username: params.username,
+    },
+  });
+  return {};
+};
 
 export const meta: Route.MetaFunction = () => [
   { title: "User Profile" },

@@ -35,7 +35,6 @@ export const meta: Route.MetaFunction = () => [
 export const loader = async ({ params }: Route.LoaderArgs) => {
   const post = await getPostById(params.postId);
   const replies = await getReplies(params.postId);
-  console.log(replies);
   return { post, replies };
 };
 

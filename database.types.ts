@@ -38,6 +38,27 @@ export type Database = {
         }
         Relationships: []
       }
+      events: {
+        Row: {
+          created_at: string | null
+          event_data: Json | null
+          event_id: string
+          event_type: Database["public"]["Enums"]["event_type"] | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_data?: Json | null
+          event_id?: string
+          event_type?: Database["public"]["Enums"]["event_type"] | null
+        }
+        Update: {
+          created_at?: string | null
+          event_data?: Json | null
+          event_id?: string
+          event_type?: Database["public"]["Enums"]["event_type"] | null
+        }
+        Relationships: []
+      }
       follows: {
         Row: {
           created_at: string
@@ -851,6 +872,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      event_type: "product_view" | "product_visit" | "profile_view"
       job_type: "full-time" | "part-time" | "remote"
       location_type: "remote" | "in-person" | "hybrid"
       notification_type: "follow" | "review" | "reply" | "mention"
@@ -996,6 +1018,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      event_type: ["product_view", "product_visit", "profile_view"],
       job_type: ["full-time", "part-time", "remote"],
       location_type: ["remote", "in-person", "hybrid"],
       notification_type: ["follow", "review", "reply", "mention"],
